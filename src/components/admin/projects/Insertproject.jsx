@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
@@ -14,6 +14,20 @@ const InsertProject = () => {
     photo: "",
     scategorieID: ""
   });
+  const [scategories, setScategories] = useState([]);
+
+  // Charger les sous-catégories au montage du composant
+  useEffect(() => {
+    const fetchScategories = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/scategories");
+        setScategories(response.data);
+      } catch (error) {
+        console.error("Erreur lors du chargement des sous-catégories:", error);
+      }
+    };
+    fetchScategories();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -93,9 +107,14 @@ const InsertProject = () => {
                     name="scategorieID"
                     value={project.scategorieID}
                     onChange={handleChange}
+                    required
                   >
                     <option value="">Sélectionnez une sous-catégorie</option>
-                    {/* Ajoutez ici les options des sous-catégories */}
+                    {scategories.map((scategorie) => (
+                      <option key={scategorie._id} value={scategorie._id}>
+                        {scategorie.nom}
+                      </option>
+                    ))}
                   </Form.Control>
                 </Form.Group>
               </Row>
