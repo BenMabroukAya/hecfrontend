@@ -7,11 +7,18 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 // Import des composants
 import Menu from "./components/admin/Menu";
 
+
+//Project Card
+import ListProjectCard from "./components/admin/projects/ListProjectCard";
+
+
+
 // Projets
 import Editproject from "./components/admin/projects/Editproject";
 import Insertproject from "./components/admin/projects/Insertproject";
 import Listprojects from "./components/admin/projects/Listprojects";
 import Viewproject from "./components/admin/projects/Viewproject";
+
 
 // Messages
 import Editmessage from "./components/admin/messages/Editmessages";
@@ -36,6 +43,11 @@ const App = () => {
     <div>
       <Router>
         <Routes>
+
+          {/* Route for LoisteProjectsCard */}
+          <Route path='/projectsCard'  element={ <ListProjectCard/>}/>
+
+
           {/* Routes Projets */}
           <Route path="/projects" exact element={<Listprojects/>}/>
           <Route path="/projects/add" element={<Insertproject/>}/>

@@ -12,6 +12,7 @@ const Menu = () => {
 
             <Navbar.Brand >HEC Electricité</Navbar.Brand>
             <Nav className="me-auto">
+                <Nav.Link as={Link} to="/projectsCard">Projects Card</Nav.Link>
                 <Nav.Link as={Link} to="/categories">Catégories</Nav.Link>
                 <Nav.Link as={Link} to="/scategories">Sous Catégories</Nav.Link>
                 <Nav.Link as={Link} to="/articles">Liste des Projets</Nav.Link>
