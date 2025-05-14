@@ -1,38 +1,52 @@
 import React from 'react';
 import Card from 'react-bootstrap/Card';
 import { Link } from "react-router-dom";
-const Cardproject = ({project}) => {
-return (
-<div className="container">
-<div className="row">
 
+const Cardproject = ({ project }) => {
+  return (
+    <div className="container mt-1">
+      <div className="row justify-content-center">
+        <div className="col-md-80">
+          <h2 className="text-center mb-4"> Détails du Projet</h2>
 
+          <Card className="shadow-lg border-0 rounded-4">
+            {project.photo && (
+              <Card.Img
+                variant="top"
+                src={project.photo}
+                alt="Photo du projet"
+                style={{
+                  height: "550px",
+                  objectFit: "cover",
+                  borderTopLeftRadius: "1rem",
+                  borderTopRightRadius: "1rem"
+                }}
+              />
+            )}
 
-<div className="col-md-6 offset-md-3 border rounded p-4 mt-4
+            <Card.Body style={{ fontSize: "1.1rem", lineHeight: "1.6" }}>
+              <Card.Title className="mb-3">
+                <strong style={{ fontSize: "1.3rem" }}> Titre :</strong> {project.title}
+              </Card.Title>
 
-shadow">
+              <Card.Text>
+                <strong>Description :</strong><br />
+                <span className="text-muted">{project.description}</span>
+              </Card.Text>
 
-<h2 className="text-center m-4">Détails Project</h2>
-<Card sx={{ maxWidth: 'auto',margin: 1 }}>
-<Card.Img variant="top" src={project.photo} width={100}
-height={200}/>
-<Card.Body>
-<Card.Title><b>title : </b>{project.title}</Card.Title>
-<Card.Text>
-{project.description}
-</Card.Text>
-<Card.Text>
-<b>Prix: {project.status} DT</b>
-</Card.Text>
-<Link className="btn btn-primary my-2" to={"/projects"}>
-Retour
-</Link>
-</Card.Body>
-</Card>
+              <Card.Text>
+                <strong>Statut :</strong> <span className="badge bg-success">{project.status} </span>
+              </Card.Text>
 
-</div>
-</div>
-</div>
-)
-}
+              <Link className="btn btn-outline-primary mt-3" to="/projects">
+                ⬅️ Retour
+              </Link>
+            </Card.Body>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default Cardproject;
