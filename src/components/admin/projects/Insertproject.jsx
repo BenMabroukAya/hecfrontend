@@ -9,6 +9,7 @@ import 'filepond/dist/filepond.min.css';
 import { useEffect, useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { FilePond, registerPlugin } from 'react-filepond';
+import { fetchcategories } from '../../../services/categorieservice';
 import { addproject } from '../../../services/projectservice';
 import { fetchscategories } from '../../../services/scategorieservice';
 
@@ -33,6 +34,7 @@ export default function Insertproject({ ajoutproject }) {
   const [files, setFiles] = useState([]);
   const [project, setProject] = useState({});
   const [scategories, setScategories] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const getscategories = async () => {
     try {
@@ -43,8 +45,18 @@ export default function Insertproject({ ajoutproject }) {
     }
   };
 
+  const getcategories = async () => {
+    try {
+      const res = await fetchcategories();
+      setCategories(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getscategories();
+    getcategories();
   }, []);
 
   const handleSave = async (e) => {
@@ -65,29 +77,299 @@ export default function Insertproject({ ajoutproject }) {
     setProject({});
   };
 
-  const serverOptions = () => { 
+  /*const formatFileName = (title, originalName) => {
+    const extension = originalName.split('.').pop();
+    const formattedTitle = title
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join('');
+    return `${formattedTitle}.${extension}`;
+  };*/
+
+  const formatFileName = (title, originalName) => {
+    const extension = originalName.split('.').pop();
+    const pascalTitle = title
+      .replace(/[^a-zA-Z0-9]/g, ' ')
+      .replace(/\s+(.)/g, (match, group1) => group1.toUpperCase())
+      .replace(/^./, str => str.toUpperCase())
+      .replace(/\s+/g, '');
+    return `${pascalTitle}.${extension}`;
+  };
+  
+  const serverOptions = () => {
+    return {
+      process: (fieldName, file, metadata, load, error, progress, abort) => {
+        const data = new FormData();
+        const formattedName = formatFileName(project.title || 'DefaultTitle', file.name);
+  
+        data.append('file', file);
+        data.append('upload_preset', 'hec_preset'); // <- Ton preset
+        data.append('public_id', formattedName.split('.')[0]); // <- Sans extension
+        data.append('folder', 'HecElectricityProject'); // <- Ton dossier cible
+  
+        axios.post('https://api.cloudinary.com/v1_1/dmfvxi601/image/upload', data, {
+          onUploadProgress: (e) => {
+            progress(e.lengthComputable, e.loaded, e.total);
+          },
+        })
+          .then((res) => {
+            setProject({ ...project, photo: res.data.secure_url });
+            load(res.data);
+          })
+          .catch((err) => {
+            console.error('Erreur de l\'upload Cloudinary :', err);
+            error('Échec de l\'upload');
+            abort();
+          });
+  
+        return {
+          abort: () => {
+            abort();
+          },
+        };
+      },
+    };
+  };
+  
+  return (
+    <div>
+      <Button variant="contained" color="success" onClick={handleOpen}>Ajouter Projet</Button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div>
+            <center><h1>Nouveau Projet</h1></center>
+            <Form>
+              <Row>
+                <Form.Group as={Col} md="12">
+                  <Form.Label>Titre</Form.Label>
+                  <Form.Control 
+                    type="text" 
+                    placeholder="Titre du projet" 
+                    value={project.title || ''}
+                    onChange={(e) => setProject({...project, title: e.target.value})}
+                  />
+                </Form.Group>
+              </Row>
+
+              <Row>
+                <Form.Group as={Col} md="12">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control 
+                    as="textarea"
+                    rows={3}
+                    placeholder="Description du projet" 
+                    value={project.description || ''}
+                    onChange={(e) => setProject({...project, description: e.target.value})}
+                  />
+                </Form.Group>
+              </Row>
+
+              <Row>
+                <Form.Group as={Col} md="6">
+                  <Form.Label>Statut</Form.Label>
+                  <Form.Control 
+                    as="select" 
+                    value={project.status || ''}
+                    onChange={(e) => setProject({ ...project, status: e.target.value })}
+                  >
+                    <option value="">-- Sélectionner un statut --</option>
+                    <option value="Terminé">Terminé</option>
+                    <option value="En cours">En cours</option>
+                  </Form.Control>
+                </Form.Group>
+
+                <Form.Group as={Col} md="6">
+                  <Form.Label>Image</Form.Label>
+                  <div style={{ width: "80%", margin: "auto", padding: "1%" }}>
+                    <FilePond
+                      files={files}
+                      acceptedFileTypes="image/*"
+                      onupdatefiles={setFiles}
+                      allowMultiple={true}
+                      server={serverOptions()}
+                      name="file"
+                    />
+                  </div> 
+                </Form.Group>
+              </Row>
+
+              <Row>
+                <Form.Group as={Col} md="12">
+                  <Form.Label>Catégorie</Form.Label>
+                  <Form.Control 
+                    as="select"
+                    value={project.categorieID || ''}
+                    onChange={(e) => setProject({...project, categorieID: e.target.value})}
+                  >
+                    <option value="">-- Sélectionner une catégorie --</option>
+                    {categories.map((cat, index) =>
+                      <option value={cat._id} key={index}>{cat.Datecategorie}</option>
+                    )}
+                  </Form.Control> 
+                </Form.Group>
+              </Row>
+
+              <Row>
+                <Form.Group as={Col} md="12">
+                  <Form.Label>Sous-catégorie</Form.Label>
+                  <Form.Control 
+                    as="select"
+                    value={project.scategorieID || ''}
+                    onChange={(e) => setProject({...project, scategorieID: e.target.value})}
+                  >
+                    <option value="">-- Sélectionner une sous-catégorie --</option>
+                    {scategories.map((scat, index) =>
+                      <option value={scat._id} key={index}>{scat.nomScategorie}</option>
+                    )}
+                  </Form.Control> 
+                </Form.Group>
+              </Row>
+            </Form>
+
+            <div style={{ marginTop: '20px' }}>
+              <button className="btn btn-success btn-sm" onClick={handleSave}>
+                <i className="fa-solid fa-floppy-disk"></i> Enregistrer
+              </button>
+              &nbsp;
+              <button className="btn btn-danger btn-sm" onClick={handleClose}>
+                <i className="fa-solid fa-arrow-right-from-bracket"></i> Annuler
+              </button>
+            </div>
+          </div>
+        </Box>
+      </Modal>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
+import axios from 'axios';
+import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import 'filepond/dist/filepond.min.css';
+import { useEffect, useState } from "react";
+import { Col, Form, Row } from "react-bootstrap";
+import { FilePond, registerPlugin } from 'react-filepond';
+import { fetchcategories } from '../../../services/categorieservice';
+import { addproject } from '../../../services/projectservice';
+import { fetchscategories } from '../../../services/scategorieservice';
+
+registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 600,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+export default function Insertproject({ ajoutproject }) {
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [files, setFiles] = useState([]);
+  const [project, setProject] = useState({});
+  const [scategories, setScategories] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  const getscategories = async () => {
+    try {
+      const res = await fetchscategories();
+      setScategories(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+  useEffect(() => {
+    getscategories();
+  }, []);
+
+  const getcategories = async () => {
+    try {
+      const res = await fetchcategories();
+      setCategories(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+
+  useEffect(() => {
+    getcategories();
+  }, []);
+
+  const handleSave = async (e) => {
+    try {
+      e.preventDefault();
+      await addproject(project)
+        .then(res => {
+          handleClose();
+          ajoutproject(res.data);
+          vider();
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const vider = () => {
+    setProject({});
+  };
+
+
+  //cloudinary
+  const serverOptions = () => {
     return {
       process: (fieldName, file, metadata, load, error, progress, abort) => {
         const data = new FormData();
         data.append('file', file);
-        data.append('upload_preset', 'Essat2025');
-        data.append('cloud_name', 'debph61bu');
-        data.append('publicid', file.name);
-
-        axios.post('https://api.cloudinary.com/v1_1/debph61bu/image/upload', data)
+        data.append('upload_preset', 'hec'); // preset 
+        data.append('cloud_name', 'dmfvxi601'); 
+  
+        axios.post("https://api.cloudinary.com/v1_1/dmfvxi601/image/upload", data)
           .then((response) => response.data)
           .then((data) => {
-            setProject({...project, photo: data.url});
+            setProject({ ...project, photo: data.url });
             load(data);
           })
-          .catch((error) => {
-            console.error('Error uploading file:', error);
+          .catch((err) => {
+            console.error('Error uploading file:', err);
             error('Upload failed');
             abort();
           });
       },
     };
   };
+  
 
   return (
     <div>
@@ -155,6 +437,22 @@ export default function Insertproject({ ajoutproject }) {
 
               <Row>
                 <Form.Group as={Col} md="12">
+                  <Form.Label>Catégorie</Form.Label>
+                  <Form.Control 
+                    as="select"
+                    value={project.categorieID}
+                    onChange={(e) => setProject({...project, categorieID: e.target.value})}
+                  >
+                    <option>-- Sélectionner une catégorie --</option>
+                    {categories.map((cat, index) =>
+                      <option value={cat._id} key={index}>{cat.Datecategorie}</option>
+                    )}
+                  </Form.Control> 
+                </Form.Group>
+              </Row>
+
+              <Row>
+                <Form.Group as={Col} md="12">
                   <Form.Label>Sous-catégorie</Form.Label>
                   <Form.Control 
                     as="select"
@@ -163,7 +461,7 @@ export default function Insertproject({ ajoutproject }) {
                   >
                     <option>-- Sélectionner une sous-catégorie --</option>
                     {scategories.map((scat, index) =>
-                      <option value={scat._id} key={index}>{scat.nomscategorie}</option>
+                      <option value={scat._id} key={index}>{scat.nomScategorie}</option>
                     )}
                   </Form.Control> 
                 </Form.Group>
@@ -319,7 +617,7 @@ const Insertproject = () => {
                     <option value=""></option>
                     {scategories && scategories.map((scat) => (
                       <option key={scat._id} value={scat._id}>
-                        {scat.nomscategorie}
+                        {scat.nomScategorie}
                       </option>
                     ))}
                   </Form.Control>
