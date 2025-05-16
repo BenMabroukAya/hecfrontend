@@ -5,8 +5,17 @@ import './App.css';
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 // Import des composants
+import Dashboard from "./components/admin/Dashboard";
+//import Home from "./components/admin/Home";
 import Menu from "./components/admin/Menu";
 
+
+//client
+import { CartProvider } from "use-shopping-cart";
+//import ListprojectsCard from "./components/client/ListprojectsCard";
+//import Cart from "./components/client/Cart"
+import ListprojectsClient from "./components/client/Listprojects";
+import Simulator from './components/client/Simulator';
 
 //Project Card
 import ListProjectCard from "./components/admin/projects/ListProjectCard";
@@ -40,7 +49,8 @@ import Viewscategorie from './components/admin/scategories/Viewscategorie';
 
 const App = () => {
   return (
-    <div>
+    <CartProvider>
+    {/*<div>*/}
       <Router>
         <Routes>
 
@@ -73,11 +83,27 @@ const App = () => {
           <Route path="/scategories/edit/:id" element={<Editscategorie/>}/>
           <Route path="/scategories/view/:id" element={<Viewscategorie/>}/>
 
+          {/*Client route*/}
+          <Route path="/client" element={<ListprojectsClient/>}/>
+         {/*<Route path="/cart" element={<Cart/>}/>*/}
+
           {/* Route Menu */}
           <Route path="/menu" element={<Menu/>}/>
+
+          {/* Route Home */}
+          {/*<Route path="/home" element={<Home/>}/>*/}
+
+          {/* Route Dashboard */}
+          <Route path="/dashboard" element={<Dashboard/>}/>
+
+          
+
+          {/* Route simulator */}
+          <Route path="/simulator" element={<Simulator/>}/>
         </Routes>
       </Router>
-    </div>
+    {/*</div>*/}
+    </CartProvider>
   );
 }
 

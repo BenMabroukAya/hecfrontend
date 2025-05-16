@@ -21,3 +21,8 @@ export const addproject=async(project)=> {
 export const editproject=(project) =>{
     return Api.put(PROJECT_API + '/' + project._id, project);
 }
+
+export const fetchprojectsPagination=async(page,limit)=> {
+  
+    return await Api.get(PROJECT_API + `/pagination?page=${page}&limit=${limit}`)
+    }
