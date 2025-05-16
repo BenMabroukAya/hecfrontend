@@ -14,6 +14,7 @@ import Menu from "./components/admin/Menu";
 import { CartProvider } from "use-shopping-cart";
 //import ListprojectsCard from "./components/client/ListprojectsCard";
 //import Cart from "./components/client/Cart"
+import AppointmentForm from './components/client/AppointmentForm';
 import ListprojectsClient from "./components/client/Listprojects";
 import Simulator from './components/client/Simulator';
 
@@ -100,6 +101,10 @@ const App = () => {
 
           {/* Route simulator */}
           <Route path="/simulator" element={<Simulator/>}/>
+
+          {/* Route AppointmentForm */}
+          <Route path="/rendez-vous" element={<AppointmentForm />} />
+
         </Routes>
       </Router>
     {/*</div>*/}

@@ -50,6 +50,9 @@ const ListProjectsClient = () => {
         <Button variant="contained" color="primary" onClick={() => navigate('/simulator')}>
           Simulateur de coût
         </Button>
+        <Button variant="contained" color="primary" onClick={() => navigate('/rendez-vous')}>
+          Réservez un rendez-vous
+        </Button>
       </Box>
 
       <Grid container spacing={3}>
