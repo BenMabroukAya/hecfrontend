@@ -4,9 +4,16 @@ import './App.css';
 
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
+
+//Authentification
+import Login from './components/authentification/Login';
+import Logout from './components/authentification/Logout';
+import Register from './components/authentification/Register';
+
+
 // Import des composants
 import Dashboard from "./components/admin/Dashboard";
-//import Home from "./components/admin/Home";
+import Home from "./components/admin/Home";
 import Menu from "./components/admin/Menu";
 
 
@@ -92,7 +99,7 @@ const App = () => {
           <Route path="/menu" element={<Menu/>}/>
 
           {/* Route Home */}
-          {/*<Route path="/home" element={<Home/>}/>*/}
+          <Route path="/home" element={<Home/>}/>
 
           {/* Route Dashboard */}
           <Route path="/dashboard" element={<Dashboard/>}/>
@@ -104,6 +111,11 @@ const App = () => {
 
           {/* Route AppointmentForm */}
           <Route path="/rendez-vous" element={<AppointmentForm />} />
+
+          {/* Routes Authentification */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/register" element={<Register />} />
 
         </Routes>
       </Router>
