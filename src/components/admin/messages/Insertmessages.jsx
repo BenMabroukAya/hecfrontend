@@ -31,7 +31,7 @@ const Insertmessage = () => {
     } else {
       try {
         await axios.post('http://localhost:3000/api/messages', messageData);
-        navigate('/messages'); // à adapter selon ta route
+        navigate('/client'); // à adapter selon ta route
       } catch (error) {
         console.error('Erreur lors de l\'ajout du message:', error);
       }

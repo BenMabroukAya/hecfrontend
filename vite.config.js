@@ -1,5 +1,8 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 export default defineConfig({
   plugins: [react()],
@@ -13,4 +16,5 @@ export default defineConfig({
     },
     port: 3003
   }
-})
+});
+
