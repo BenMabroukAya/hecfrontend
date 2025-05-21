@@ -1,4 +1,4 @@
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import CalculateIcon from '@mui/icons-material/Calculate';
 import Badge from '@mui/material/Badge';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
@@ -9,7 +9,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Link } from 'react-router-dom';
-import { useShoppingCart } from 'use-shopping-cart';
+
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
     right: -3,
@@ -20,11 +20,10 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 function Menu() {
-  const { cartCount } = useShoppingCart();
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container fluid>
-        <Navbar.Brand href="#">Ecommerce</Navbar.Brand>
+        <Navbar.Brand href="#">HEC Electricity</Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav
@@ -32,23 +31,35 @@ function Menu() {
             style={{ maxHeight: '100px' }}
             navbarScroll
           >
-  <Link to="/cart"> <IconButton aria-label="cart">
-  <StyledBadge badgeContent={cartCount} color="secondary">
-  <ShoppingCartIcon />
-  </StyledBadge>
+  <Link to="/simulator">
+  <IconButton aria-label="simulator">
+    <StyledBadge color="primary">
+      <CalculateIcon />
+    </StyledBadge>
   </IconButton>
-  </Link>
-            <Nav.Link as={Link} to="/">Home</Nav.Link>
-            <Nav.Link as={Link} to="/categories">Catégories</Nav.Link>
-            <Nav.Link as={Link} to="/scategories">Sous Catégories</Nav.Link>
-            <Nav.Link as={Link} to="/projects">Projects</Nav.Link>
-            <NavDropdown title="Client" id="navbarScrollingDropdown">
+</Link>
+
+            
+
+            <NavDropdown title="Admin" id="navbarScrollingDropdownadmin">
+             <NavDropdown.Item as={Link} to="/login">
+                Dashboard admin
+              </NavDropdown.Item>
+              
+            </NavDropdown>
+
+
+            <NavDropdown title="Client" id="navbarScrollingDropdownclient">
              <NavDropdown.Item as={Link} to="/client">
                 Liste des projects
               </NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="#action5">
-                Something else here
+              <NavDropdown.Item as={Link} to="/messages/add">
+                Saisir un feedback
+              </NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item href="/simulator">
+                Simulateur de couts
               </NavDropdown.Item>
             </NavDropdown>
             

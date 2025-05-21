@@ -64,7 +64,7 @@ const AppointmentForm = () => {
       <TextField
         fullWidth label="Email ou téléphone" name="contact"
         value={form.contact} onChange={handleChange} sx={{ my: 2 }}
-        placeholder="ex: test@gmail.com ou 20 000 000"
+        placeholder="ex: user@gmail.com ou 20 000 000"
       />
 
       <TextField

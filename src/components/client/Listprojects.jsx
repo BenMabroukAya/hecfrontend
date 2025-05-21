@@ -10,7 +10,7 @@ import {
   Typography
 } from '@mui/material';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Pagination from './Pagination';
 
@@ -58,7 +58,7 @@ const ListProjectsClient = () => {
       <Grid container spacing={3}>
         {projects.map((project) => (
           <Grid item xs={12} sm={6} md={4} key={project._id}>
-            <Card sx={{ height: '100%', cursor: 'pointer' }} onClick={() => navigate(`/projects/details/${project._id}`)}>
+            <Card sx={{ height: '100%', cursor: 'pointer' }} onClick={() => navigate(`/projects/view/${project._id}`)}>
               <CardMedia component="img" height="160" image={project.photo} alt={project.title} />
               <CardContent>
                 <Typography variant="h6">{project.title}</Typography>
